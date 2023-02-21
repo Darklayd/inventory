@@ -1,0 +1,27 @@
+@using InventoryWebApplication.Services.Database
+@model InventoryWebApplication.Operations.MessageOperation
+@inject PaymentMethodsService _paymentMethodsService
+
+@{
+    ViewBag.Title = "Settings";
+    ViewBag.PreviousPage = "";
+    Layout = "_FormsLayout";
+}
+
+<form class="simple-form" accept-charset="UTF-8" method="post" asp-controller="Settings" asp-action="EditSettings">
+    <div class="form-section">
+        <!-- TODO: Add settings -->
+    </div>
+
+    <div>
+        <button class="btn-secondary" type="submit">Save</button>
+        <a href="/">
+            <button class="btn-secondary" type="button">Discard</button>
+        </a>
+    </div>
+</form>
+
+@section Scripts
+{
+
+}

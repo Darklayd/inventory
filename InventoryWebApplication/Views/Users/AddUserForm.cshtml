@@ -1,0 +1,47 @@
+﻿@model InventoryWebApplication.Operations.MessageOperation
+
+@{
+    ViewBag.Title = "Adding User";
+    ViewBag.PreviousPage = "users";
+    Layout = "_FormsLayout";
+}
+
+<form class="simple-form" method="post" asp-controller="Users" asp-action="AddUser">
+    <div class="form-section">
+        <label class="form-label" for="nameInput">Name: </label>
+        <input type="text" name="name" id="nameInput"/><br/>
+
+        <label class="form-label" for="passwordInput">Password: </label>
+        <input type="text" name="password" id="passwordInput">
+        <button type="button" class="form-action" id="generatePassword">
+            <span uk-icon="refresh"></span>
+        </button>
+        <br/>
+
+        <label class="form-label" for="roleInput">Role: </label>
+        <select name="role" id="roleInput">
+            @foreach (string possibleRole in Role.AvailableRoles)
+            {
+                <option value="@possibleRole">@Role.GetFormattedName(possibleRole)</option>
+            }
+        </select>
+    </div>
+    <button class="btn-primary" type="submit">Add</button>
+</form>
+
+@section Scripts
+{
+    <script>
+       $('#generatePassword').click(function() {
+         const allowedChars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
+         
+         let password = '';
+         for(let i = 0; i < 12; i++) {
+           password += allowedChars[getRandomInt(0, allowedChars.length)];
+         }
+         console.log(password);
+         
+         document.getElementById('passwordInput').value = password;
+       })
+    </script>
+}

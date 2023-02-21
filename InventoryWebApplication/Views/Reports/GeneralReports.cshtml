@@ -1,0 +1,227 @@
+@inject SalesService _salesService
+@using InventoryWebApplication.Services.Database
+@using InventoryWebApplication.Utils
+@using System.Globalization
+@using InventoryWebApplication.Models.Database
+@using InventoryWebApplication.Utils.Formatting
+@model InventoryWebApplication.Operations.FilterOperation
+
+@{
+    ViewBag.Title = "Reports";
+    ViewBag.PreviousPage = "";
+    Layout = "_Layout";
+
+    SaleInfo[] sales = await _salesService.GetSales(Model.Start, Model.End, Model.Usernames);
+}
+
+<h3>
+    Reports@(Model.Start != DateTime.MinValue ? " from " + Model.Start.FormatShortDate() : "")
+    @(Model.End != DateTime.MaxValue ? " up to " + Model.End.FormatShortDate() : "")
+</h3>
+
+<div style="margin-bottom: 10px">
+    <button class="btn-primary btn-group-toggle" type="button" data-toggle="collapse" data-target="#filters" aria-navigation="Toggle filters">Toggle filters</button>
+</div>
+
+<div style="margin-bottom: 15px">
+    <div id="filters" class="collapse">
+        <b>Filters</b>
+        <form class="simple-form bigger" asp-action="GeneralReports" asp-controller="Reports" method="get">
+            <label class="form-label" for="startDateInput">Start Date (inclusive): </label>
+            <input id="startDateInput" name="start" type="date" value="@(Model.Start == DateTime.MinValue ? "" : Model.Start.ToString("yyyy-MM-dd"))">
+            <span uk-icon="icon: close" onclick="clearValue(startDateInput); submitBtn.click()"></span><br>
+
+            <label class="form-label" for="endDateInput">End Date (inclusive): </label>
+            <input id="endDateInput" name="end" type="date" value="@(Model.End == DateTime.MaxValue ? "" : Model.End.ToString("yyyy-MM-dd"))">
+            <span uk-icon="icon: close" onclick="clearValue(endDateInput); submitBtn.click()"></span><br>
+            <br>
+
+            <button id="submitBtn" class="btn-secondary" type="submit">Apply Filters</button>
+            <a class="normal-text-link" asp-action="GeneralReports" asp-controller="Reports">
+                <button class="btn-secondary" type="button">Clear Filters</button>
+            </a>
+        </form>
+    </div>
+</div>
+
+<div>
+    <h4>Summary</h4>
+    <p>
+        <b>Sales count:</b> @sales.Length<br/>
+        <b>Total sales:</b> @(((float)sales.Sum(o => o.TotalPrice)).ToString(CultureInfo.InvariantCulture))<br/>
+        <b>Total profit:</b> @(((float)sales.Sum(o => o.Profit)).ToString(CultureInfo.InvariantCulture))
+    </p>
+
+    <div class="card-bottom-margin">
+        <div class="card chart column-chart">
+            <div id="dailySalesColumnChart"></div>
+        </div>
+    </div>
+
+    <h4>Payment Methods</h4>
+    <div class="card-deck">
+        <div class="card-bottom-margin">
+            <div class="card chart pie-chart">
+                <div id="paymentMethodsCountPieChart"></div>
+            </div>
+        </div>
+
+        <div class="card-bottom-margin">
+            <div class="card chart pie-chart">
+                <div id="paymentMethodsTotalPieChart"></div>
+            </div>
+        </div>
+
+        <div class="card-bottom-margin">
+            <div class="card chart pie-chart">
+                <div id="paymentMethodsProfitPieChart"></div>
+            </div>
+        </div>
+    </div>
+
+    <h4>Employees</h4>
+    <div class="card-deck">
+        <div class="card-bottom-margin">
+            <div class="card chart pie-chart">
+                <div id="employeesCountPieChart"></div>
+            </div>
+        </div>
+
+        <div class="card-bottom-margin">
+            <div class="card chart pie-chart">
+                <div id="employeesTotalPieChart"></div>
+            </div>
+        </div>
+
+        <div class="card-bottom-margin">
+            <div class="card chart pie-chart">
+                <div id="employeesProfitPieChart"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts
+{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script>
+        const dailySalesColumnChart = document.getElementById('dailySalesColumnChart');
+        const paymentMethodsCountPieChart = document.getElementById('paymentMethodsCountPieChart');
+        const paymentMethodsTotalPieChart = document.getElementById('paymentMethodsTotalPieChart');
+        const paymentMethodsProfitPieChart = document.getElementById('paymentMethodsProfitPieChart');
+        const employeesCountPieChart = document.getElementById('employeesCountPieChart');
+        const employeesTotalPieChart = document.getElementById('employeesTotalPieChart');
+        const employeesProfitPieChart = document.getElementById('employeesProfitPieChart');
+        
+        const startDateInput = document.getElementById('startDateInput');
+        const endDateInput = document.getElementById('endDateInput');
+        const submitBtn = document.getElementById('submitBtn');
+    
+        google.charts.load('current', {'packages':['corechart']});
+        google.charts.setOnLoadCallback(drawAllCharts);
+        
+        function drawAllCharts(){
+            let charts = [
+                // Total Sales
+                function() {
+                    let data;
+
+                    @{
+                        DateTime totalSalesStart = Model.Start != DateTime.MinValue ? Model.Start : new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+                        DateTime totalSalesEnd = Model.End != DateTime.MaxValue ? Model.End : DateTime.Now;
+
+                        TimeSpan totalTime = totalSalesEnd - totalSalesStart;
+
+                        if (totalTime <= TimeSpan.FromDays(30))
+                        {
+                            
+                            @: data = google.visualization.arrayToDataTable(
+                            @Html.Raw(JsUtils.BuildChartData("Day", "Sales", "Profit", 
+                                _salesService.GetDailySalesAndProfit(totalSalesStart, totalSalesEnd, sales)
+                                    .Select(o => new KeyValuePair<string, (double, double)>(o.Key.FormatShortDate(), o.Value))))
+                            @:);
+                            @:finishColumnChart(dailySalesColumnChart, data,  'Daily sales (@totalSalesStart.FormatShortDate() - @totalSalesEnd.FormatShortDate())');
+
+                        }
+                        else
+                        {
+                            @: data = google.visualization.arrayToDataTable(
+                            @Html.Raw(JsUtils.BuildChartData("Month", "Sales", "Profit", 
+                                _salesService.GetMonthlySalesAndProfit(totalSalesStart, totalSalesEnd, sales)
+                                    .Select(o => new KeyValuePair<string, (double, double)>(o.Key.FormatShortDate(), o.Value))))
+                            @:);
+                            @:finishColumnChart(dailySalesColumnChart, data,  'Monthly sales (@totalSalesStart.FormatShortDate() - @totalSalesEnd.FormatShortDate())');                                                                                                                                                                                                                      
+                        }
+                    }
+                },
+                
+                // Payment Methods
+                function() {
+                    let data = google.visualization.arrayToDataTable(
+                        @Html.Raw(JsUtils.BuildChartData("Method", "Sales Count", _salesService.CountSalesPerProperty(sales, o => o.Method.Name)))
+                    );
+                    finishPieChart(paymentMethodsCountPieChart, data,  'Payment methods / Sales number');
+                },
+                
+                function() {
+                    let data = google.visualization.arrayToDataTable(
+                        @Html.Raw(JsUtils.BuildChartData("Method", "Sales", _salesService.SumSalesPerProperty(sales, o => o.Method.Name)))
+                    );
+                    finishPieChart(paymentMethodsTotalPieChart, data,  'Payment methods / Sales');
+                },
+                
+                function() {
+                    let data = google.visualization.arrayToDataTable(
+                        @Html.Raw(JsUtils.BuildChartData("Method", "Profit", _salesService.SumSalesProfitPerProperty(sales, o => o.Method.Name)))
+                    );
+                    finishPieChart(paymentMethodsProfitPieChart, data,  'Payment methods / Profit');
+                },
+                
+                // Employees
+                function() {
+                    let data = google.visualization.arrayToDataTable(
+                        @Html.Raw(JsUtils.BuildChartData("Employee", "Sales Count", _salesService.CountSalesPerProperty(sales, o => o.Seller.Name)))
+                    );
+                    finishPieChart(employeesCountPieChart, data,  'Employee / Sales number');
+                },
+                
+                function() {
+                    let data = google.visualization.arrayToDataTable(
+                        @Html.Raw(JsUtils.BuildChartData("Employee", "Sales", _salesService.SumSalesPerProperty(sales, o => o.Seller.Name)))
+                    );
+                    finishPieChart(employeesTotalPieChart, data,  'Employee / Sales');
+                },
+                
+                function() {
+                    let data = google.visualization.arrayToDataTable(
+                        @Html.Raw(JsUtils.BuildChartData("Employee", "Profit", _salesService.SumSalesProfitPerProperty(sales, o => o.Seller.Name)))
+                    );
+                    finishPieChart(employeesProfitPieChart, data,  'Employee / Profit');
+                },
+            ];
+            
+            for(let i = 0; i < charts.length; i++) {
+                charts[i]();
+            }
+        }
+        
+        function finishPieChart(target, data, title) {
+            let options = {
+                title: title,
+            }
+            let chart = new google.visualization.PieChart(target);        
+            chart.draw(data,  options);
+        }
+        
+        function finishColumnChart(target, data, title) {
+            let options = {
+                title: title,
+            }
+            let chart = new google.visualization.ColumnChart(target);        
+            chart.draw(data,  options);
+        }
+        
+    </script>
+}

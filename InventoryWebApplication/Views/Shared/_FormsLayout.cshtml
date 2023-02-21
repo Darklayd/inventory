@@ -1,0 +1,24 @@
+@model InventoryWebApplication.Operations.MessageOperation
+
+@{
+    Layout = "_Layout";
+}
+
+<h3>@ViewData["Title"]</h3>
+@if (!Model.IsEmpty)
+{
+    <div role="alert" class="alert alert-@Model.Severity failed-alert">@Model.Message</div>
+}
+
+@RenderBody()
+
+@section Scripts
+{
+    @if (!Model.IsEmpty)
+    {
+        <script>
+            fadeAlerts();
+        </script>
+    }
+    @await RenderSectionAsync("Scripts", false)
+}

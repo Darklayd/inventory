@@ -1,0 +1,268 @@
+﻿/* Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
+for details on configuring this project to bundle and minify static web assets. */
+
+a.navbar-brand {
+    white-space: normal;
+    text-align: center;
+    word-break: break-all;
+}
+
+/* Provide sufficient contrast against white background */
+a {
+    color: #0366d6;
+}
+
+.btn-primary {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+.nav-pills .nav-link.active, .nav-pills .show > .nav-link {
+    color: #fff;
+    background-color: #1b6ec2;
+    border-color: #1861ac;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+.border-top {
+    border-top: 1px solid #e5e5e5;
+}
+
+.border-bottom {
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.box-shadow {
+    box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
+}
+
+button.accept-policy {
+    font-size: 1rem;
+    line-height: inherit;
+}
+
+/* Sticky footer styles
+-------------------------------------------------- */
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+}
+
+.simple-form .form-label {
+    min-width: 130px;
+}
+
+.simple-form input {
+    align-self: end;
+}
+
+.simple-form select {
+    padding: 1px 2px;
+}
+
+.simple-form.bigger .form-label {
+    min-width: 150px;
+}
+
+.form-action {
+    cursor: pointer;
+    padding-bottom: 0;
+    padding-top: 0;
+    user-select: none;
+    height: 30px;
+    width: 30px;
+}
+
+.form-action span {
+    padding-bottom: 8px;
+}
+
+.form-section {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.simple-form textarea {
+    min-height: 30px;
+}
+
+.simple-form .form-field {
+    margin-bottom: 6px;
+}
+
+.simple-form .form-field * {
+    vertical-align: top;
+}
+
+.simple-form input {
+    min-width: 182px;
+}
+
+.simple-form textarea {
+    min-width: 182px;
+}
+
+div.alert-warning {
+    padding: 10px;
+}
+
+div.alert-info {
+    padding: 10px;
+}
+
+div.alert-danger {
+    padding: 10px;
+}
+
+div.alert-success {
+    padding: 10px;
+}
+
+.nav-user {
+    float: right;
+    display: inline-flex;
+    flex-direction: row;
+}
+
+.nav-user .nav-link {
+    padding-left: 0;
+}
+
+.normal-text-link {
+    text-decoration: none;
+    color: black;
+}
+
+.card-actions .card-img {
+    width: 150px !important;
+}
+
+.card-actions .card {
+    margin-bottom: 30px;
+}
+
+.charts-display {
+    display: flex;
+    flex-direction: column;
+}
+
+.pie-chart {
+    width: 450px;
+}
+
+.column-chart {
+    width: 750px;
+}
+
+.chart {
+    max-width: 92vw;
+}
+
+@media (min-width: 576px) {
+    .chart {
+        max-width: 80vw;
+    }
+}
+
+.card-bottom-margin {
+    margin-bottom: 30px;
+}
+
+.btn-toolbar {
+    margin-top: 5px;
+    margin-bottom: 10px;
+}
+
+table tr td a {
+    text-decoration: none;
+    color: black;
+}
+
+.table-wrapper {
+    overflow-y: scroll;
+    border: lightgray solid 1px;
+    border-radius: .25rem;
+}
+
+.table-items-wrapper {
+    max-height: 60vh;
+    min-height: 60vh;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.table-items-wrapper table {
+    margin: 0;
+}
+
+.card-fixed-width textarea {
+    resize: none;
+    padding: 4px;
+}
+
+.card-fixed-width {
+    max-width: 210px;
+    min-width: 12rem;
+}
+
+.card-fixed-width input {
+    width: 10.5rem;
+}
+
+.card-fixed-width select {
+    width: 10.5rem;
+}
+
+div .display-horizontal {
+    display: flex;
+    flex-direction: row
+}
+
+.table-select-id {
+    cursor: pointer;
+}
+
+.btn-secondary.btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    margin-right: 2px;
+    margin-left: 2px;
+}
+
+span.delete-list-item {
+    color: #9f9f9f;
+}
+
+span.delete-list-item:hover {
+    color: darkred;
+    cursor: pointer;
+}
+
+.cur-pointer {
+    cursor: pointer;
+}
+
+.center-flex {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
